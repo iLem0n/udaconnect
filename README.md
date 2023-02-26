@@ -12,9 +12,7 @@ To do so, ***you will refactor this application into a microservice architecture
 
 ### Technologies
 * [Flask](https://flask.palletsprojects.com/en/1.1.x/) - API webserver
-* [SQLAlchemy](https://www.sqlalchemy.org/) - Database ORM
-* [PostgreSQL](https://www.postgresql.org/) - Relational database
-* [PostGIS](https://postgis.net/) - Spatial plug-in for PostgreSQL enabling geographic queries]
+* [Quarkus](https://quarkus.io) - Microservice framework
 * [Vagrant](https://www.vagrantup.com/) - Tool for managing virtual deployed environments
 * [VirtualBox](https://www.virtualbox.org/) - Hypervisor allowing you to run multiple operating systems
 * [K3s](https://k3s.io/) - Lightweight distribution of K8s to easily develop against a local cluster
@@ -76,12 +74,9 @@ Type `exit` to exit the virtual OS and you will find yourself back in your compu
 Afterwards, you can test that `kubectl` works by running a command like `kubectl describe services`. It should not return any errors.
 
 ### Steps
-1. `kubectl apply -f deployment/db-configmap.yaml` - Set up environment variables for the pods
-2. `kubectl apply -f deployment/db-secret.yaml` - Set up secrets for the pods
-3. `kubectl apply -f deployment/postgres.yaml` - Set up a Postgres database running PostGIS
+3. `kubectl apply -f deployment/udaconnect-connection-service.yaml` - Set up th service and deployment for connection service
 4. `kubectl apply -f deployment/udaconnect-api.yaml` - Set up the service and deployment for the API
 5. `kubectl apply -f deployment/udaconnect-app.yaml` - Set up the service and deployment for the web app
-6. `sh scripts/run_db_command.sh <POD_NAME>` - Seed your database against the `postgres` pod. (`kubectl get pods` will give you the `POD_NAME`)
 
 Manually applying each of the individual `yaml` files is cumbersome but going through each step provides some context on the content of the starter project. In practice, we would have reduced the number of steps by running the command against a directory to apply of the contents: `kubectl apply -f deployment/`.
 
@@ -113,33 +108,8 @@ As a reminder, each module should have:
 4. `__init__.py`
 
 ### Docker Images
-`udaconnect-app` and `udaconnect-api` use docker images from `udacity/nd064-udaconnect-app` and `udacity/nd064-udaconnect-api`. To make changes to the application, build your own Docker image and push it to your own DockerHub repository. Replace the existing container registry path with your own.
-
-## Configs and Secrets
-In `deployment/db-secret.yaml`, the secret variable is `d293aW1zb3NlY3VyZQ==`. The value is simply encoded and not encrypted -- this is ***not*** secure! Anyone can decode it to see what it is.
-```bash
-# Decodes the value into plaintext
-echo "d293aW1zb3NlY3VyZQ==" | base64 -d
-
-# Encodes the value to base64 encoding. K8s expects your secrets passed in with base64
-echo "hotdogsfordinner" | base64
-```
-This is okay for development against an exclusively local environment and we want to keep the setup simple so that you can focus on the project tasks. However, in practice we should not commit our code with secret values into our repository. A CI/CD pipeline can help prevent that.
-
-## PostgreSQL Database
-The database uses a plug-in named PostGIS that supports geographic queries. It introduces `GEOMETRY` types and functions that we leverage to calculate distance between `ST_POINT`'s which represent latitude and longitude.
-
-_You may find it helpful to be able to connect to the database_. In general, most of the database complexity is abstracted from you. The Docker container in the starter should be configured with PostGIS. Seed scripts are provided to set up the database table and some rows.
-### Database Connection
-While the Kubernetes service for `postgres` is running (you can use `kubectl get services` to check), you can expose the service to connect locally:
-```bash
-kubectl port-forward svc/postgres 5432:5432
-```
-This will enable you to connect to the database at `localhost`. You should then be able to connect to `postgresql://localhost:5432/geoconnections`. This is assuming you use the built-in values in the deployment config map.
-### Software
-To manually connect to the database, you will need software compatible with PostgreSQL.
-* CLI users will find [psql](http://postgresguide.com/utilities/psql.html) to be the industry standard.
-* GUI users will find [pgAdmin](https://www.pgadmin.org/) to be a popular open-source solution.
+To build all necessary docker images run the `build-containers.sh` script in the root of the project. 
+To deploy it on your own docker repository change the `REPO`variable on the top of the file to your own DockeHub repo. 
 
 ## Architecture Diagrams
 Your architecture diagram should focus on the services and how they talk to one another. For our project, we want the diagram in a `.png` format. Some popular free software and tools to create architecture diagrams:

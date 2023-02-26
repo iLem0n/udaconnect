@@ -9,10 +9,13 @@ option java_outer_classname = "PersonsService";
 
 package persons;
 
+// Persons service
 service Persons {
+  // returns all possible persons
   rpc GetPersons (google.protobuf.Empty) returns (PersonsReply) {}
 }
 
+// The response message containing all persons
 message PersonsReply {
   repeated PersonDTO persons = 1;
 }

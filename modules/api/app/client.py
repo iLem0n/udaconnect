@@ -1,6 +1,5 @@
 import grpc
 import persons_pb2_grpc as persons_pb2_grpc
-import persons_pb2 as persons_pb2
 import connections_pb2_grpc as connections_pb2_grpc
 import connections_pb2 as connections_pb2
 from google.protobuf import empty_pb2 as google_dot_protobuf_dot_empty__pb2
@@ -11,7 +10,7 @@ class GrpcClient(object):
     """
 
     def __init__(self):
-        self.host = 'localhost'
+        self.host = 'udaconnect-connection-service'
         self.server_port = 9000
 
         # instantiate a channel

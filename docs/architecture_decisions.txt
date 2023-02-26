@@ -1,0 +1,11 @@
+To enable seemless horizontal scaling and decoupling of the application and the client interaction kafka was introduced.
+Clients can publish their location and persoon data without relying on the application itself.
+Since kafka is a replayable log it can also be seen as a mid-term storage for the data but should be persistent throught an additional service to ensure long term storage (not implemented since it was not the main target here)
+A connection service consumes the data when it is up and calculates possible connections keeping it in memory since it can be rebuild at any time, no database necessary here.
+It also acts as a GRPC-Server to provide the frontend-api with the connections data in a fast and language independant way.
+
+
+
+PS: Since the provided test data wasn't well structured (see: https://knowledge.udacity.com/questions/959634) there are more results in the final app than in the provided MVP.
+   The REST-API was only reduced to the neccary calls so there is no further documentation provided.
+
