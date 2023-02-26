@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+import "model.proto";
+import "google/protobuf/empty.proto";
+
+option java_multiple_files = true;
+option java_package = "de.ilem0n.udaconnect.rpc";
+option java_outer_classname = "PersonsService";
+
+package persons;
+
+service Persons {
+  rpc GetPersons (google.protobuf.Empty) returns (PersonsReply) {}
+}
+
+message PersonsReply {
+  repeated PersonDTO persons = 1;
+}

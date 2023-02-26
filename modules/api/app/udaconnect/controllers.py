@@ -11,6 +11,7 @@ from flask import request
 from flask_accepts import accepts, responds
 from flask_restx import Namespace, Resource
 from typing import Optional, List
+from app.client import GrpcClient
 
 DATE_FORMAT = "%Y-%m-%d"
 
@@ -39,6 +40,8 @@ class LocationResource(Resource):
 
 @api.route("/persons")
 class PersonsResource(Resource):
+    client = GrpcClient()
+
     @accepts(schema=PersonSchema)
     @responds(schema=PersonSchema)
     def post(self) -> Person:
@@ -46,10 +49,19 @@ class PersonsResource(Resource):
         new_person: Person = PersonService.create(payload)
         return new_person
 
+    def map_person_schema(self, p):
+        ret = PersonSchema()
+        ret.id = p.id
+        ret.first_name = p.firstName
+        ret.last_name = p.lastName
+        ret.company_name = p.companyName
+        return ret
+
     @responds(schema=PersonSchema, many=True)
     def get(self) -> List[Person]:
-        persons: List[Person] = PersonService.retrieve_all()
-        return persons
+
+        reply = self.client.get_persons()
+        return map(self.map_person_schema, reply.persons)
 
 
 @api.route("/persons/<person_id>")
@@ -66,6 +78,25 @@ class PersonResource(Resource):
 @api.param("end_date", "Upper bound of date range", _in="query")
 @api.param("distance", "Proximity to a given user in meters", _in="query")
 class ConnectionDataResource(Resource):
+    client = GrpcClient()
+
+    def map_connection_schema(self, c):
+        connection = ConnectionSchema()
+        location = LocationSchema()
+        location.latitude = c.location.latitude
+        location.longitude = c.location.longitude
+        location.creation_time = datetime.now()
+
+        person = PersonSchema()
+        person.id = c.person.id
+        person.first_name = c.person.firstName
+        person.last_name = c.person.lastName
+        person.company_name = c.person.companyName
+
+        connection.location = location
+        connection.person = person
+        return connection
+
     @responds(schema=ConnectionSchema, many=True)
     def get(self, person_id) -> ConnectionSchema:
         start_date: datetime = datetime.strptime(
@@ -74,10 +105,7 @@ class ConnectionDataResource(Resource):
         end_date: datetime = datetime.strptime(request.args["end_date"], DATE_FORMAT)
         distance: Optional[int] = request.args.get("distance", 5)
 
-        results = ConnectionService.find_contacts(
-            person_id=person_id,
-            start_date=start_date,
-            end_date=end_date,
-            meters=distance,
-        )
-        return results
+        reply = self.client.get_connections(person_id)
+        print("CONNECTIONS: ")
+
+        return map(self.map_connection_schema, reply.connections)
