@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "de.ilem0n.udaconnect.rpc.model";
+option java_outer_classname = "PersonsService";
+
+message LocationDTO {
+  double latitude = 1;
+  double longitude = 2;
+  string createdAt = 3;
+}
+
+message PersonDTO {
+  int32 id = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string companyName = 4;
+}
+
+message ConnectionDTO {
+  LocationDTO location = 1;
+  PersonDTO person = 2;
+}

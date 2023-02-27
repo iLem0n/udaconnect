@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+import "model.proto";
+
+option java_multiple_files = true;
+option java_package = "de.ilem0n.udaconnect.rpc";
+option java_outer_classname = "ConnectionsService";
+
+package connections;
+
+// The greeting service definition.
+service Connections {
+  // Sends a greeting
+  rpc GetConnections (ConnectionsRequest) returns (ConnectionsReply) {}
+}
+
+// The request message containing the user's name.
+message ConnectionsRequest {
+  int32 personId = 1;
+}
+
+
+// The response message containing the greetings
+message ConnectionsReply {
+  int32 personId = 1;
+  repeated ConnectionDTO connections = 2;
+}
