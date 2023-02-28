@@ -74,9 +74,9 @@ Type `exit` to exit the virtual OS and you will find yourself back in your compu
 Afterwards, you can test that `kubectl` works by running a command like `kubectl describe services`. It should not return any errors.
 
 ### Steps
-3. `kubectl apply -f deployment/udaconnect-connection-service.yaml` - Set up th service and deployment for connection service
-4. `kubectl apply -f deployment/udaconnect-api.yaml` - Set up the service and deployment for the API
-5. `kubectl apply -f deployment/udaconnect-app.yaml` - Set up the service and deployment for the web app
+1. `kubectl apply -f deployment/udaconnect-connection-service.yaml` - Set up th service and deployment for connection service
+2. `kubectl apply -f deployment/udaconnect-api.yaml` - Set up the service and deployment for the API
+3. `kubectl apply -f deployment/udaconnect-app.yaml` - Set up the service and deployment for the web app
 
 Manually applying each of the individual `yaml` files is cumbersome but going through each step provides some context on the content of the starter project. In practice, we would have reduced the number of steps by running the command against a directory to apply of the contents: `kubectl apply -f deployment/`.
 

@@ -6,3 +6,5 @@ python3 -m grpc_tools.protoc -I./proto --python_out=. --pyi_out=. --grpc_python_
 python3 -m grpc_tools.protoc -I./proto --python_out=. --pyi_out=. --grpc_python_out=. ./proto/connections.proto
 python3 -m grpc_tools.protoc -I./proto --python_out=. --pyi_out=. --grpc_python_out=. ./proto/persons.proto
 ```  
+
+This client can be used to test against the interface itself. Refer to `modules/api/app/client.py` for example code. 
